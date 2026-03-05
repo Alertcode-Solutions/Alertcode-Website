@@ -1,4 +1,3 @@
-﻿import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 import { ADMIN_SESSION_COOKIE_NAME, isSameOriginRequest, verifySessionToken } from "@/lib/auth";
 import { logAdminAction } from "@/lib/admin-log";
@@ -105,8 +104,17 @@ function parseCreatePayload(payload: unknown): { valid: true; data: ProjectInput
   };
 }
 
+function isPrismaUniqueConstraintError(errorValue: unknown): boolean {
+  if (!errorValue || typeof errorValue !== "object") {
+    return false;
+  }
+
+  const candidate = errorValue as { code?: unknown };
+  return candidate.code === "P2002";
+}
+
 function handlePrismaError(errorValue: unknown, fallbackMessage: string) {
-  if (errorValue instanceof Prisma.PrismaClientKnownRequestError && errorValue.code === "P2002") {
+  if (isPrismaUniqueConstraintError(errorValue)) {
     return error("Project slug must be unique.", 409);
   }
 
@@ -321,4 +329,6 @@ export const DELETE = safeApiHandler(
     fallbackMessage: "Unable to delete project.",
   },
 );
+
+
 

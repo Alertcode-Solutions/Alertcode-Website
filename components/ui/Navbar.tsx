@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Container from "@/components/ui/Container";
 import ThemeToggle from "@/components/ui/ThemeToggle";
-import { useScrollSpy } from "@/lib/use-scroll-spy";
 
 const SearchModal = dynamic(() => import("@/components/ui/SearchModal"), {
   ssr: false,
@@ -40,7 +39,6 @@ function SearchIcon() {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const activeSection = useScrollSpy();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +46,7 @@ export default function Navbar() {
 
   const isHidden = hiddenExact.has(pathname) || hiddenPrefixes.some((prefix) => pathname.startsWith(prefix));
 
-  const resolvedActive = useMemo(() => {
+  const resolvedActive = useMemo<NavItem["id"] | null>(() => {
     if (pathname.startsWith("/work")) {
       return "work";
     }
@@ -73,8 +71,8 @@ export default function Navbar() {
       return "insights";
     }
 
-    return activeSection;
-  }, [activeSection, pathname]);
+    return null;
+  }, [pathname]);
 
   useEffect(() => {
     setMenuOpen(false);
