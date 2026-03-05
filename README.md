@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Alertcode Website (Stable v1)
 
-## Getting Started
+Production-oriented Next.js 14 application for Alertcode, including:
 
-First, run the development server:
+- marketing pages (`/`, `/work`, `/blog`, `/about`, `/team`, `/community`, `/contact`)
+- global search modal
+- admin dashboard and protected admin APIs
+- Prisma-backed content and operations data
+- monitoring endpoints (`/api/health`, `/api/metrics`)
+- PWA support for production builds
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Prisma
+- Vitest + Testing Library
+
+## Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+## Environment Setup
+
+1. Copy `.env.example` to `.env`
+2. Fill required values:
+
+- `DATABASE_URL`
+- `SESSION_SECRET`
+- `NEXT_PUBLIC_SITE_URL`
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD_HASH`
+
+Optional values are documented in `.env.example` and `DEPLOYMENT.md`.
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Development:
 
-## Learn More
+```bash
+npx prisma migrate dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Production/staging:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx prisma migrate deploy
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+```bash
+npm run dev         # Next.js dev server
+npm run lint        # ESLint
+npm run test        # Vitest
+npm run build       # Production build
+npm run start       # Start production server
+npm run analyze     # Bundle analysis build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## CI
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+GitHub Actions workflow: `.github/workflows/ci.yml`
+
+CI runs:
+
+- `npm ci`
+- `npm run lint`
+- `npx vitest run`
+- `npm run build`
+
+## Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for environment variables, Vercel settings, and runtime notes.
+
+## Stable v1 Release Checklist
+
+- `npm run lint` passes
+- `npm run test` passes
+- `npm run build` passes
+- `.env` is not committed
+- secrets and local artifacts are ignored via `.gitignore`
